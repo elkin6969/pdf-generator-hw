@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Счёт-фактура № {{ invoice_id }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        /* Подключение шрифта для кириллицы */
+        @font-face {
+            font-family: 'DejaVu Sans';
+            src: local('DejaVu Sans'),
+                 local('DejaVuSans'),
+                 local('Roboto'),
+                 local('Arial');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'DejaVu Sans', 'Roboto', 'Arial', sans-serif;
+            font-size: 12pt;
+            color: #333333;
+            line-height: 1.5;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 15px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24pt;
+            margin: 0;
+        }
+
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 11pt;
+            margin-top: 5px;
+        }
+
+        .info-block {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .info-section {
+            width: 48%;
+        }
+
+        .info-section h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 13pt;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #bdc3c7;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table th {
+            background-color: #2c3e50;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        table tr:hover {
+            background-color: #eef2f7;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #ecf0f1 !important;
+            font-size: 13pt;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 15px;
+            border-top: 1px solid #bdc3c7;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 9pt;
+        }
+
+        .signature-block {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature {
+            width: 45%;
+            text-align: center;
+        }
+
+        .signature .line {
+            border-bottom: 1px solid #333;
+            margin: 30px 0 5px 0;
+        }
+
+        .signature .label {
+            font-size: 9pt;
+            color: #7f8c8d;
+        }
+
+        .amount {
+            text-align: right;
+        }
+
+        .highlight {
+            color: #27ae60;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>СЧЁТ-ФАКТУРА</h1>
+        <div class="subtitle">Документ об оказании услуг / отгрузке товара</div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-section">
+            <h3>Информация о счёте</h3>
+            <table>
+                <tr>
+                    <td><strong>Номер счёта:</strong></td>
+                    <td>{{ invoice_id }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Дата:</strong></td>
+                    <td>{{ date }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Статус:</strong></td>
+                    <td class="highlight">{{ status }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="info-section">
+            <h3>Клиент</h3>
+            <table>
+                <tr>
+                    <td><strong>Наименование:</strong></td>
+                    <td>{{ client_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Адрес:</strong></td>
+                    <td>{{ address }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Телефон:</strong></td>
+                    <td>{{ phone }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <h3 style="color: #2c3e50; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px;">
+        Перечень услуг / товаров
+    </h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">№</th>
+                <th style="width: 45%;">Наименование</th>
+                <th style="width: 15%;">Кол-во</th>
+                <th style="width: 15%;">Ед. изм.</th>
+                <th style="width: 20%;">Сумма (₽)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center;">1</td>
+                <td>{{ item_name }}</td>
+                <td style="text-align: center;">{{ quantity }}</td>
+                <td style="text-align: center;">{{ unit }}</td>
+                <td class="amount">{{ amount }}</td>
+            </tr>
+            <tr class="total-row">
+                <td colspan="4" style="text-align: right;"><strong>ИТОГО:</strong></td>
+                <td class="amount"><strong>{{ amount }} ₽</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p style="margin-top: 15px;">
+        <strong>Сумма прописью:</strong> {{ amount_words }} рублей 00 копеек
+    </p>
+
+    <div class="signature-block">
+        <div class="signature">
+            <div class="line"></div>
+            <div class="label">Подпись продавца</div>
+            <p style="font-size: 10pt; margin-top: 5px;">{{ seller_name }}</p>
+        </div>
+        <div class="signature">
+            <div class="line"></div>
+            <div class="label">Подпись покупателя</div>
+            <p style="font-size: 10pt; margin-top: 5px;">{{ client_name }}</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Документ сформирован автоматически | PDF Generator v1.0</p>
+        <p>ООО «ТехноСервис» | ИНН 7701234567 | г. Москва, ул. Примерная, д. 1</p>
+    </div>
+</body>
+</html>
